@@ -71,7 +71,7 @@ class App extends Component {
             <Container>
                 <Sidebar>
                     <h1>Nucleus Charity 2018</h1>
-                    <h2>Lands End to John O' Groats</h2>
+                    <h2>{'Lands End to John O\' Groats'}</h2>
                     <AthleteTable athletes={this.state.athletes} target={targetDistance} />
                     <h3>Want to join in? Join the <a href='https://www.strava.com/clubs/175865'>Nucleus Club</a>, and then please <a href='/auth'>authenticate</a></h3>
                 </Sidebar>
