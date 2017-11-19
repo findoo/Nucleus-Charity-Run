@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import get from 'lodash/get';
 import styled from 'styled-components';
 
+import Link from './Link';
+
 export default class AthleteTable extends Component {
 
     getRows = () => {
@@ -10,9 +12,9 @@ export default class AthleteTable extends Component {
             .map((ath, idx) => {
                 let runnerDistance = get(ath, 'stats.ytd_run_totals.distance', 0) / 1000;
                 return <tr key={idx}>
-                    <td><a href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}`}</a></td>
+                    <td><Link href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}`}</Link></td>
                     <NumberTD>{runnerDistance.toFixed(2)}km</NumberTD>
-                    <NumberTD>{(runnerDistance / this.props.target * 100).toFixed(2)}%</NumberTD>
+                    <NumberTD>{(runnerDistance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
                 </tr>
             });
     }
