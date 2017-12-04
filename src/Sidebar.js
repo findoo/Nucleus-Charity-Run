@@ -1,4 +1,5 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import AthleteTable from './AthleteTable';
@@ -53,3 +54,16 @@ const HideDiv = styled.div`
     font-size: 40px;
     cursor: pointer;
 `;
+
+Sidebar.PropTypes = {
+    athletes: PropTypes.objectOf(PropTypes.shape({
+        firstname: PropTypes.string,
+        lastname: PropTypes.string,
+        stats: PropTypes.shape({
+            ytd_run_totals: PropTypes.shape({
+                distance: PropTypes.number
+            })
+        })
+    })),
+    targetDistance: PropTypes.number
+};

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import get from 'lodash/get';
 import GoogleMapReact from 'google-map-react';
+import moment from 'moment';
 import polyline from '@mapbox/polyline';
 import styled from 'styled-components';
 
@@ -14,7 +15,7 @@ const targetDistance = 1305;
 class App extends Component {
 
     state = {
-        athletes: []
+        athletes: {}
     }
 
     componentDidMount() {
@@ -29,9 +30,24 @@ class App extends Component {
                 let mutated = Object.values(athletes)
                     .map(ath => ({ [ath.id]: ath }))
                     .reduce((a, b) => ({ ...a, ...b }), {});
+                mutated['pacer'] = this.getPacer();
                 setTimeout(this.initialLoad, 100000)
                 this.setState({ athletes: mutated })
             });
+    }
+
+    getPacer = () => {
+        let currentDayInYear = moment().dayOfYear();
+        let daysInYear = moment().endOf('year').dayOfYear();
+        return {
+            firstname: 'Pacer',
+            lastname: '',
+            stats: {
+                ytd_run_totals: {
+                    distance: (targetDistance / daysInYear) * currentDayInYear * 1000
+                }
+            }
+        };
     }
 
     getStatForAth = (ath) => {
@@ -46,7 +62,7 @@ class App extends Component {
 
     getMarkers = (athletes) => {
         return Object.values(athletes)
-            .filter(ath => ath.stats)
+            .filter(ath => get(ath, 'stats.ytd_run_totals.distance', 0) !== 0)
             .map((ath, i) => {
                 let percentage = (get(ath, 'stats.ytd_run_totals.distance', 0) / 1000 / targetDistance * 100);
                 let idx = Math.floor((percentage / 100) * lines.length);

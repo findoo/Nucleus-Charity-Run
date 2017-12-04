@@ -1,4 +1,5 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 export default class Marker extends PureComponent {
@@ -28,3 +29,6 @@ const Mark = styled.div`
     padding: 4px;
 `;
 
+Marker.PropTypes = {
+    text: PropTypes.string
+};

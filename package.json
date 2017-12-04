@@ -15,11 +15,12 @@
     "express": "^4.16.2",
     "google-map-react": "^0.25.0",
     "lodash": "^4.17.4",
-    "react": "^16.1.1",
-    "react-dom": "^16.1.1",
+    "moment": "^2.19.3",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "react-scripts": "1.0.17",
     "request": "^2.83.0",
     "strava-v3": "^1.14.0",
-    "styled-components": "^2.2.3"
+    "styled-components": "^2.2.4"
   }
 }
