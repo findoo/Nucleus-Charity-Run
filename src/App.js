@@ -12,10 +12,17 @@ import Sidebar from './Sidebar';
 const lines = polyline.decode('gqqpHbe{a@q{FioZc{GcdSstDe~FgcFkyTatN}ve@eoMsm]cnBugFywEoqRe{B}tVajIszBacFqgMgoGcsLsoF}jTe|CsbVafHej[cyE}b\\mpBwzCmuGy_PqkFwpHkmEedO_i@edGaqB}`JeaAc_SelAi|Rs{FmnXcdFgjZasHg`WiyCksGesEexBknCwdCo}E__@swGde@wlDuaCcaGe}H}sAiwIabB}gFywF~l@gfFs{DezB}uDekE_hMelFolAynC~gAsaBeeBcg@|n@{oHskEmsH{jHggF~zLofFfcD{`DrGslGny@wqLyhAsdSlmCq_Sqw@eoJk]ylLz_@mqGqq@_aGfu@srC_eAguEs}AehFlfAakF~RmjCbfDcjJr_BalC|_BcdEerAefGpxEojMexC{zIa}@ysHyu@seNxMkmIkqDq|JumGqdG{KyjHjw@y`Hg`CghPyQ_}VmyMeeDpYm{Cmy@c~I{ZusIfmB}}G~Eer@uScmG~R{~CxjDg|IveHq~IlAajLfgBiyb@`qOcpZbeC}rKg~@usEc_GgyMx{A{vL{fC_tN_kAq}EsnDcrIoxBseFwx@kmInlBmyOxvGerTr`K{{SpaPcqG|yIksDxkCqnLfxSekDnxQopDtxRkiFn}KebE~qEwwL~~GmeHb@qhHznEeiDzK{sDniBexHhsDocD~fAclCcUqkGqgFckE{hIu~EcaA}vFfn@ctHh{CesGokHokBccEirAdc@saCe[}{ElbG_hEt|AutEhtCsgAin@_aBgnBi`A`kAgo@mx@y`@NwoD~Ss}DiqAaxJpRscC_s@_eLuwE{oDxnBgkGlcDm~HrxAohEdWq~HkgGuiDlnBeeDl_DkpD|eBibNn`GkmIbyEogDnuGedDpqJkvGliAquGdsFccFfjNsmFvmB}uCxvTeeCf~W_eEfd\\g~CnuN}qDlvBc{DeeB{~KqkH_wIgqEg~DwhHyjD_fMyxL_oY{nDwcL_jHumByrDst@i}EzjH{kBp}OmlL`wQoeEd`FgaBdwF{oEidDiaAvsJcpDnpNkcBnlKyqEdbH_zAfHmxF~oAmyCtuA{kAsgBwjFq~HuyCaxF}eFcwMiiFqwPk{DccDehDhiGezF`I{mA}eE}iC{kCwlBx`CynBzHkzA_nBcdAw_LwqAcqF{gCuuPidKuxLcoEwzUwqFkaLauImrVw}FswGw`GgbKmjEosRknBoePufEeuF{tLekJglA}I{wFxaH_aHeZohCuvGefDavBmgDjaBolEcxBsFI');
 const targetDistance = 1305;
 
+export const SPORT_TYPE = {
+    RUN: 'run',
+    RIDE: 'ride',
+    SWIM: 'swim'
+}
+
 class App extends Component {
 
     state = {
-        athletes: {}
+        athletes: {},
+        sport: SPORT_TYPE.RUN
     }
 
     componentDidMount() {
@@ -36,16 +43,21 @@ class App extends Component {
             });
     }
 
+    changeSport = sport => {
+        this.setState({sport});
+    }
+
     getPacer = () => {
         let currentDayInYear = moment().dayOfYear();
         let daysInYear = moment().endOf('year').dayOfYear();
+        let distance = (targetDistance / daysInYear) * currentDayInYear * 1000;
         return {
             firstname: 'Pacer',
             lastname: '',
             stats: {
-                ytd_run_totals: {
-                    distance: (targetDistance / daysInYear) * currentDayInYear * 1000
-                }
+                ytd_run_totals: { distance },
+                ytd_ride_totals: { distance },
+                ytd_swim_totals: { distance }
             }
         };
     }
@@ -62,9 +74,9 @@ class App extends Component {
 
     getMarkers = (athletes) => {
         return Object.values(athletes)
-            .filter(ath => get(ath, 'stats.ytd_run_totals.distance', 0) !== 0)
+            .filter(ath => get(ath, `stats.ytd_${this.state.sport}_totals.distance`, 0) !== 0)
             .map((ath, i) => {
-                let percentage = (get(ath, 'stats.ytd_run_totals.distance', 0) / 1000 / targetDistance * 100);
+                let percentage = (get(ath, `stats.ytd_${this.state.sport}_totals.distance`, 0) / 1000 / targetDistance * 100);
                 let idx = Math.floor((percentage / 100) * lines.length);
                 let line = lines[idx > lines.length - 1 ? lines.length - 1 : idx];
                 return <Marker key={i} lat={line[0]} lng={line[1]} text={ath.firstname} />;
@@ -86,7 +98,11 @@ class App extends Component {
     render() {
         return (
             <Container>
-                <Sidebar athletes={this.state.athletes} targetDistance={targetDistance}/>
+                <Sidebar
+                    athletes={this.state.athletes}
+                    changeSport={this.changeSport}
+                    sport={this.state.sport}
+                    targetDistance={targetDistance} />
                 <Main>
                     <GoogleMapReact
                         onGoogleApiLoaded={({ map, maps }) => { this.setState({ map: map, maps: maps, mapLoaded: true }) }}

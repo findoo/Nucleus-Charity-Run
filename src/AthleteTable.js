@@ -9,10 +9,10 @@ export default class AthleteTable extends Component {
 
     getRows = () => {
         return Object.values(this.props.athletes)
-            .filter(ath => get(ath, 'stats.ytd_run_totals.distance', 0) !== 0)
-            .sort((a, b) => get(b, 'stats.ytd_run_totals.distance', 0) - get(a, 'stats.ytd_run_totals.distance', 0))
+            .filter(ath => get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) !== 0)
+            .sort((a, b) => get(b, `stats.ytd_${this.props.sport}_totals.distance`, 0) - get(a, `stats.ytd_${this.props.sport}_totals.distance`, 0))
             .map((ath, idx) => {
-                let runnerDistance = get(ath, 'stats.ytd_run_totals.distance', 0) / 1000;
+                let runnerDistance = get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) / 1000;
                 return <tr key={idx}>
                     <td><Link href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}`}</Link></td>
                     <NumberTD>{runnerDistance.toFixed(2)}km</NumberTD>
@@ -23,9 +23,10 @@ export default class AthleteTable extends Component {
 
     getTotalRow = () => {
         let distance = Object.values(this.props.athletes)
-            .reduce((a, b) => a + get(b, 'stats.ytd_run_totals.distance', 0), 0) / 1000;
+            .filter(ath => ath.firstname !== 'Pacer')
+            .reduce((a, b) => a + get(b, `stats.ytd_${this.props.sport}_totals.distance`, 0), 0) / 1000;
         return <tr key='total'>
-            <td>Total</td>
+            <td>Total (ex. Pacer)</td>
             <NumberTD>{distance.toFixed(2)}km</NumberTD>
             <NumberTD>{(distance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
         </tr>;

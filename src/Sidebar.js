@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
+import BicycleIcon from 'react-icons/lib/fa/bicycle';
+import RunIcon from 'react-icons/lib/md/directions-run';
+import SwimIcon from 'react-icons/lib/ti/anchor';
+
 import AthleteTable from './AthleteTable';
 import Link from './Link';
+import { SPORT_TYPE } from './App';
 
 export default class Sidebar extends Component {
 
@@ -20,7 +25,22 @@ export default class Sidebar extends Component {
                 {!this.state.hidden && <div>
                     <h1>Nucleus Charity 2018</h1>
                     <h2>{'Lands End to John O\' Groats'}</h2>
-                    <AthleteTable athletes={this.props.athletes} targetDistance={this.props.targetDistance} />
+                    <RunIcon
+                        size={35}
+                        color={this.props.sport === SPORT_TYPE.RUN ? 'orange' : 'black'}
+                        onClick={this.props.changeSport.bind(null, SPORT_TYPE.RUN)} />
+                    <BicycleIcon
+                        size={35}
+                        color={this.props.sport === SPORT_TYPE.RIDE ? 'orange' : 'black'}
+                        onClick={this.props.changeSport.bind(null, SPORT_TYPE.RIDE)} />
+                    <SwimIcon
+                        size={35}
+                        color={this.props.sport === SPORT_TYPE.SWIM ? 'orange' : 'black'}
+                        onClick={this.props.changeSport.bind(null, SPORT_TYPE.SWIM)} />
+                    <AthleteTable
+                        athletes={this.props.athletes}
+                        sport={this.props.sport}
+                        targetDistance={this.props.targetDistance} />
                     <h3>Want to join in? Join the <Link href='https://www.strava.com/clubs/175865'>Nucleus Club</Link>,
                         and then please <Link href='/auth'>authenticate</Link></h3>
                 </div>}
@@ -65,5 +85,7 @@ Sidebar.PropTypes = {
             })
         })
     })),
+    changeSport: PropTypes.func,
+    sport: PropTypes.string,
     targetDistance: PropTypes.number
 };

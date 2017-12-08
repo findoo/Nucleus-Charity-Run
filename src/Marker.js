@@ -15,16 +15,13 @@ export default class Marker extends PureComponent {
 
 const Mark = styled.div`
     position: absolute;
-    width: 40;
-    height: 40;
-    left: -20;
-    top: -20;
-    border: 5px solid #f44336;
-    border-radius: 40;
+    top: -5px;
+    border: 2px solid orange;
+    border-radius: 10px;
     background-color: white;
+    font-family: vag-rounded-light,Helvetica,Arial,sans-serif;
     text-align: center;
     color: #3f51b5;
-    font-size: 16;
     font-weight: bold;
     padding: 4px;
 `;
