@@ -26,6 +26,6 @@ const Mark = styled.div`
     padding: 4px;
 `;
 
-Marker.PropTypes = {
+Marker.propTypes = {
     text: PropTypes.string
 };

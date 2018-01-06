@@ -33,18 +33,36 @@ class App extends Component {
         fetch('/getAthletes')
             .then(res => res.json())
             .then(athletes => {
-                athletes.forEach(ath => this.getStatForAth(ath));
-                let mutated = Object.values(athletes)
-                    .map(ath => ({ [ath.id]: ath }))
-                    .reduce((a, b) => ({ ...a, ...b }), {});
-                mutated['pacer'] = this.getPacer();
-                setTimeout(this.initialLoad, 100000)
-                this.setState({ athletes: mutated })
+                let athState = { ...this.state.athletes };
+                Object.values(athletes)
+                    .forEach(ath => {
+                        if (!athState[ath.id]) {
+                            athState[ath.id] = { ...ath, selected: true };
+                        }
+                        this.startFetchStatForAth(ath);
+                    });
+                athState['pacer'] = this.getPacer();
+
+                setTimeout(this.initialLoad, 100000);
+                this.setState({ athletes: athState });
             });
     }
 
     changeSport = sport => {
-        this.setState({sport});
+        this.setState({ sport });
+    }
+
+    toggleAth = athId => {
+        let athletes = { ...this.state.athletes };
+        athletes[athId].selected = !athletes[athId].selected;
+        this.setState({ athletes });
+    }
+
+    toggleAllAth = () => {
+        let athletes = { ...this.state.athletes };
+        let anyFalse = Object.values(athletes).some(ath => !ath.selected);
+        Object.values(athletes).forEach(ath => athletes[ath.id].selected = anyFalse);
+        this.setState({ athletes });
     }
 
     getPacer = () => {
@@ -52,17 +70,19 @@ class App extends Component {
         let daysInYear = moment().endOf('year').dayOfYear();
         let distance = (targetDistance / daysInYear) * currentDayInYear * 1000;
         return {
+            id: 'pacer',
             firstname: 'Pacer',
             lastname: '',
             stats: {
                 ytd_run_totals: { distance },
                 ytd_ride_totals: { distance },
                 ytd_swim_totals: { distance }
-            }
+            },
+            selected: true
         };
     }
 
-    getStatForAth = (ath) => {
+    startFetchStatForAth = (ath) => {
         fetch('/getStat/' + ath.id)
             .then(res => res.json())
             .then(stats => {
@@ -74,6 +94,7 @@ class App extends Component {
 
     getMarkers = (athletes) => {
         return Object.values(athletes)
+            .filter(ath => ath.selected)
             .filter(ath => get(ath, `stats.ytd_${this.state.sport}_totals.distance`, 0) !== 0)
             .map((ath, i) => {
                 let percentage = (get(ath, `stats.ytd_${this.state.sport}_totals.distance`, 0) / 1000 / targetDistance * 100);
@@ -102,7 +123,9 @@ class App extends Component {
                     athletes={this.state.athletes}
                     changeSport={this.changeSport}
                     sport={this.state.sport}
-                    targetDistance={targetDistance} />
+                    targetDistance={targetDistance}
+                    toggleAth={this.toggleAth}
+                    toggleAllAth={this.toggleAllAth} />
                 <Main>
                     <GoogleMapReact
                         onGoogleApiLoaded={({ map, maps }) => { this.setState({ map: map, maps: maps, mapLoaded: true }) }}

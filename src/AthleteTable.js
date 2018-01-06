@@ -13,7 +13,8 @@ export default class AthleteTable extends Component {
             .sort((a, b) => get(b, `stats.ytd_${this.props.sport}_totals.distance`, 0) - get(a, `stats.ytd_${this.props.sport}_totals.distance`, 0))
             .map((ath, idx) => {
                 let runnerDistance = get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) / 1000;
-                return <Row isPacer={ath.firstname === 'Pacer'}  key={idx}>
+                return <Row isPacer={ath.firstname === 'Pacer'} key={idx}>
+                    <td><input type='checkbox' checked={ath.selected} value={ath.selected} onChange={this.props.toggleAth.bind(null, ath.id)} /></td>
                     <td><Link href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}`}</Link></td>
                     <NumberTD>{runnerDistance.toFixed(2)}km</NumberTD>
                     <NumberTD>{(runnerDistance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
@@ -26,6 +27,7 @@ export default class AthleteTable extends Component {
             .filter(ath => ath.firstname !== 'Pacer')
             .reduce((a, b) => a + get(b, `stats.ytd_${this.props.sport}_totals.distance`, 0), 0) / 1000;
         return <TotalRow key='total'>
+            <td></td>
             <td>Total (ex. Pacer)</td>
             <NumberTD>{distance.toFixed(2)}km</NumberTD>
             <NumberTD>{(distance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
@@ -33,12 +35,16 @@ export default class AthleteTable extends Component {
     }
 
     render() {
+        let selectAllChecked = !Object.values(this.props.athletes).some(ath => !ath.selected);
         return <Table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <NumberTH>Distance</NumberTH>
-                    <NumberTH>% complete</NumberTH>
+                    <Th width='30px'>
+                        <input type='checkbox' checked={selectAllChecked} value={selectAllChecked} onChange={this.props.toggleAllAth} />
+                    </Th>
+                    <Th>Name</Th>
+                    <Th align='right'>Distance</Th>
+                    <Th align='right'>% complete</Th>
                 </tr>
             </thead>
             <tbody>
@@ -66,8 +72,9 @@ const NumberTD = styled.td`
     text-align: right;
 `;
 
-const NumberTH = styled.th`
-    text-align: right;
+const Th = styled.th`
+    ${props => props.width ? `width: ${props.width}` : ''}
+    text-align: ${props => props.align || 'left'}
 `;
 
 const TotalRow = styled.tr`
@@ -78,7 +85,7 @@ const Row = styled.tr`
     ${props => props.isPacer ? 'border-bottom: 1px solid red;' : ''}
 `;
 
-AthleteTable.PropTypes = {
+AthleteTable.propTypes = {
     athletes: PropTypes.objectOf(PropTypes.shape({
         firstname: PropTypes.string,
         lastname: PropTypes.string,
@@ -86,7 +93,11 @@ AthleteTable.PropTypes = {
             ytd_run_totals: PropTypes.shape({
                 distance: PropTypes.number
             })
-        })
+        }),
+        selected: PropTypes.bool
     })),
-    targetDistance: PropTypes.number
+    sport: PropTypes.string,
+    targetDistance: PropTypes.number,
+    toggleAth: PropTypes.func,
+    toggleAllAth: PropTypes.func
 };

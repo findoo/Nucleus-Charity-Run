@@ -44,19 +44,21 @@ export default class Sidebar extends Component {
                     <AthleteTable
                         athletes={this.props.athletes}
                         sport={this.props.sport}
-                        targetDistance={this.props.targetDistance} />
+                        targetDistance={this.props.targetDistance}
+                        toggleAth={this.props.toggleAth}
+                        toggleAllAth={this.props.toggleAllAth} />
                     <h3>Want to join in? Join the <Link href='https://www.strava.com/clubs/175865'>Nucleus Club</Link>,
                         and then please <Link href='/auth'>authenticate</Link></h3>
                 </div>}
                 {!this.state.hidden && this.state.showActivities && <Activities>
-                <Link onClick={this.toggleShowActivities}>Hide activities</Link> 
-                <IFrame 
-                    allowtransparency
-                    frameborder='0'
-                    height='454'
-                    scrolling='no'
-                    src='https://www.strava.com/clubs/175865/latest-rides/251984fccea70cd1338d0e829b58db5881600727?show_rides=true'
-                    width='300'></IFrame>
+                    <Link onClick={this.toggleShowActivities}>Hide activities</Link>
+                    <IFrame
+                        allowtransparency
+                        frameborder='0'
+                        height='454'
+                        scrolling='no'
+                        src='https://www.strava.com/clubs/175865/latest-rides/251984fccea70cd1338d0e829b58db5881600727?show_rides=true'
+                        width='300'></IFrame>
                 </Activities>}
             </Bar>
         );
@@ -103,7 +105,7 @@ const HideDiv = styled.div`
     cursor: pointer;
 `;
 
-Sidebar.PropTypes = {
+Sidebar.propTypes = {
     athletes: PropTypes.objectOf(PropTypes.shape({
         firstname: PropTypes.string,
         lastname: PropTypes.string,
@@ -111,9 +113,12 @@ Sidebar.PropTypes = {
             ytd_run_totals: PropTypes.shape({
                 distance: PropTypes.number
             })
-        })
+        }),
+        selected: PropTypes.bool
     })),
     changeSport: PropTypes.func,
     sport: PropTypes.string,
-    targetDistance: PropTypes.number
+    targetDistance: PropTypes.number,
+    toggleAth: PropTypes.func,
+    toggleAllAth: PropTypes.func
 };
