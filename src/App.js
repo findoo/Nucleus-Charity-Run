@@ -10,7 +10,7 @@ import Polyline from './Polyline';
 import Sidebar from './Sidebar';
 
 const lines = polyline.decode('gqqpHbe{a@q{FioZc{GcdSstDe~FgcFkyTatN}ve@eoMsm]cnBugFywEoqRe{B}tVajIszBacFqgMgoGcsLsoF}jTe|CsbVafHej[cyE}b\\mpBwzCmuGy_PqkFwpHkmEedO_i@edGaqB}`JeaAc_SelAi|Rs{FmnXcdFgjZasHg`WiyCksGesEexBknCwdCo}E__@swGde@wlDuaCcaGe}H}sAiwIabB}gFywF~l@gfFs{DezB}uDekE_hMelFolAynC~gAsaBeeBcg@|n@{oHskEmsH{jHggF~zLofFfcD{`DrGslGny@wqLyhAsdSlmCq_Sqw@eoJk]ylLz_@mqGqq@_aGfu@srC_eAguEs}AehFlfAakF~RmjCbfDcjJr_BalC|_BcdEerAefGpxEojMexC{zIa}@ysHyu@seNxMkmIkqDq|JumGqdG{KyjHjw@y`Hg`CghPyQ_}VmyMeeDpYm{Cmy@c~I{ZusIfmB}}G~Eer@uScmG~R{~CxjDg|IveHq~IlAajLfgBiyb@`qOcpZbeC}rKg~@usEc_GgyMx{A{vL{fC_tN_kAq}EsnDcrIoxBseFwx@kmInlBmyOxvGerTr`K{{SpaPcqG|yIksDxkCqnLfxSekDnxQopDtxRkiFn}KebE~qEwwL~~GmeHb@qhHznEeiDzK{sDniBexHhsDocD~fAclCcUqkGqgFckE{hIu~EcaA}vFfn@ctHh{CesGokHokBccEirAdc@saCe[}{ElbG_hEt|AutEhtCsgAin@_aBgnBi`A`kAgo@mx@y`@NwoD~Ss}DiqAaxJpRscC_s@_eLuwE{oDxnBgkGlcDm~HrxAohEdWq~HkgGuiDlnBeeDl_DkpD|eBibNn`GkmIbyEogDnuGedDpqJkvGliAquGdsFccFfjNsmFvmB}uCxvTeeCf~W_eEfd\\g~CnuN}qDlvBc{DeeB{~KqkH_wIgqEg~DwhHyjD_fMyxL_oY{nDwcL_jHumByrDst@i}EzjH{kBp}OmlL`wQoeEd`FgaBdwF{oEidDiaAvsJcpDnpNkcBnlKyqEdbH_zAfHmxF~oAmyCtuA{kAsgBwjFq~HuyCaxF}eFcwMiiFqwPk{DccDehDhiGezF`I{mA}eE}iC{kCwlBx`CynBzHkzA_nBcdAw_LwqAcqF{gCuuPidKuxLcoEwzUwqFkaLauImrVw}FswGw`GgbKmjEosRknBoePufEeuF{tLekJglA}I{wFxaH_aHeZohCuvGefDavBmgDjaBolEcxBsFI');
-const targetDistance = 1305;
+const targetDistance = 1407;
 
 export const SPORT_TYPE = {
     RUN: 'run',

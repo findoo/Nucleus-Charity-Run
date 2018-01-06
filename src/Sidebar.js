@@ -13,16 +13,19 @@ import { SPORT_TYPE } from './App';
 export default class Sidebar extends Component {
 
     state = {
-        hidden: false
+        hidden: false,
+        showActivites: false
     }
 
     toggleSidebar = () => { this.setState({ hidden: !this.state.hidden }); }
+
+    toggleShowActivities = () => { this.setState({ showActivities: !this.state.showActivities }); }
 
     render() {
         return (
             <Bar hide={this.state.hidden}>
                 <HideDiv onClick={this.toggleSidebar}>{this.state.hidden ? '<' : '>'}</HideDiv>
-                {!this.state.hidden && <div>
+                {!this.state.hidden && !this.state.showActivities && <div>
                     <h1>Nucleus Charity 2018</h1>
                     <h2>{'Lands End to John O\' Groats'}</h2>
                     <RunIcon
@@ -37,6 +40,7 @@ export default class Sidebar extends Component {
                         size={35}
                         color={this.props.sport === SPORT_TYPE.SWIM ? 'orange' : 'black'}
                         onClick={this.props.changeSport.bind(null, SPORT_TYPE.SWIM)} />
+                    <ActivitiesLink onClick={this.toggleShowActivities}>Show activities</ActivitiesLink>
                     <AthleteTable
                         athletes={this.props.athletes}
                         sport={this.props.sport}
@@ -44,6 +48,16 @@ export default class Sidebar extends Component {
                     <h3>Want to join in? Join the <Link href='https://www.strava.com/clubs/175865'>Nucleus Club</Link>,
                         and then please <Link href='/auth'>authenticate</Link></h3>
                 </div>}
+                {!this.state.hidden && this.state.showActivities && <Activities>
+                <Link onClick={this.toggleShowActivities}>Hide activities</Link> 
+                <IFrame 
+                    allowtransparency
+                    frameborder='0'
+                    height='454'
+                    scrolling='no'
+                    src='https://www.strava.com/clubs/175865/latest-rides/251984fccea70cd1338d0e829b58db5881600727?show_rides=true'
+                    width='300'></IFrame>
+                </Activities>}
             </Bar>
         );
     }
@@ -67,6 +81,20 @@ const Bar = styled.div`
     @media (max-width: 750px) {
         width: ${props => props.hide ? '20px' : '95vw'};
     }
+`;
+
+const IFrame = styled.iframe`
+    width: 100%;
+    border: none;
+    margin-top: 30px;
+`;
+
+const Activities = styled.div`
+    margin-top: 50px;
+`;
+
+const ActivitiesLink = Link.extend`
+    margin-left: 15px;
 `;
 
 const HideDiv = styled.div`
