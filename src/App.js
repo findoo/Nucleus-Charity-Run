@@ -45,6 +45,9 @@ class App extends Component {
 
                 setTimeout(this.initialLoad, 100000);
                 this.setState({ athletes: athState });
+            })
+            .catch(e => {
+                console.error(e);
             });
     }
 
@@ -89,6 +92,9 @@ class App extends Component {
                 let athletes = { ...this.state.athletes };
                 athletes[ath.id].stats = stats;
                 this.setState({ athletes })
+            })
+            .catch(e => {
+                console.error(e);
             });
     }
 
