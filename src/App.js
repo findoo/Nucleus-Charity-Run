@@ -147,7 +147,11 @@ class App extends Component {
 }
 
 const Container = styled.div`
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
     font-family: vag-rounded-light,Helvetica,Arial,sans-serif;
+    font-size: 14px;
 `;
 
 const Main = styled.div`
