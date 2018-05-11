@@ -9,22 +9,22 @@
   },
   "proxy": "http://localhost:3001",
   "dependencies": {
-    "@mapbox/polyline": "^0.2.0",
+    "@mapbox/polyline": "^1.0.0",
     "apicache": "^1.2.0",
     "connect-timeout": "^1.9.0",
     "eslint": "^4.14.0",
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.2",
-    "google-map-react": "^0.25.0",
+    "google-map-react": "^1.0.1",
     "lodash": "^4.17.4",
     "moment": "^2.19.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-icons": "^2.2.7",
-    "react-scripts": "1.0.17",
+    "react-scripts": "1.1.4",
     "request": "^2.83.0",
     "strava-v3": "^1.14.0",
-    "styled-components": "^2.2.4",
+    "styled-components": "^3.2.6",
     "winston": "^2.4.0"
   }
 }
