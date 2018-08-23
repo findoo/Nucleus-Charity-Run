@@ -45,9 +45,6 @@ class App extends Component {
 
                 setTimeout(this.initialLoad, 100000);
                 this.setState({ athletes: athState });
-            })
-            .catch(e => {
-                console.error(e);
             });
     }
 
@@ -92,14 +89,11 @@ class App extends Component {
                 let athletes = { ...this.state.athletes };
                 athletes[ath.id].stats = stats;
                 this.setState({ athletes })
-            })
-            .catch(e => {
-                console.error(e);
             });
     }
 
     getMarkers = (athletes) => {
-        return Object.values(athletes)
+        return Object.values(athletes || {})
             .filter(ath => ath.selected)
             .filter(ath => get(ath, `stats.ytd_${this.state.sport}_totals.distance`, 0) !== 0)
             .map((ath, i) => {
@@ -134,6 +128,7 @@ class App extends Component {
                     toggleAllAth={this.toggleAllAth} />
                 <Main>
                     <GoogleMapReact
+                        bootstrapURLKeys={{key: 'xxxxxx'}}
                         onGoogleApiLoaded={({ map, maps }) => { this.setState({ map: map, maps: maps, mapLoaded: true }) }}
                         yesIWantToUseGoogleMapApiInternals
                         defaultCenter={{ lat: 54.3735819, lng: -0.5352386 }}

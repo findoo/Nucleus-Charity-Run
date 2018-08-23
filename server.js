@@ -5,9 +5,9 @@ const strava = require('strava-v3');
 const timeout = require('connect-timeout');
 const winston = require('winston');
 
-const tokenStorePath = '/Users/finlaysmith/accesskeys.json';
+const tokenStorePath = './accesskeys.json';
 let accessTokens = {};
-fs.readFile(tokenStorePath, 'utf8', function (err, data) {
+fs.readFile(tokenStorePath, 'utf8', (err, data) => {
     accessTokens = JSON.parse(data);
 });
 
@@ -18,53 +18,62 @@ const cache = apicache.middleware;
 function checkLimits(limits, res) {
     if (limits !== null && (limits.shortTermUsage >= limits.shortTermLimit || limits.longTermUsage >= limits.longTermLimit)) {
         res.status(429).json({ error: 'Strava API rate limits reached!' });
+        return false;
     }
+    return true;
 }
 
 function checkError(err, res) {
     if (err) {
         res.status(500).json(err);
+        return false;
     }
+    return true;
 }
 
-app.get('/auth', function (req, res) {
+app.get('/auth', (req, res) => {
     res.redirect(strava.oauth.getRequestAccessURL({ scope: 'view_private,write' }));
 });
 
-app.get('/thanks', function (req, res) {
-    strava.oauth.getToken(req.query.code, function (err, payload, limits) {
-        checkLimits(limits, res);
-        checkError(err, res);
-
-        accessTokens[payload.athlete.id] = payload.access_token;
-
-        fs.writeFile(tokenStorePath, JSON.stringify(accessTokens), function (err) {
-            if (err) {
-                winston.log('error', 'Problem saving auth key!', err);
-            }
-            winston.log('info', 'New access token saved');
-        });
-        apicache.clear();
-        res.redirect('/');
+app.get('/thanks', (req, res) => {
+    strava.oauth.getToken(req.query.code, (err, payload, limits) => {
+        if (checkLimits(limits, res) && checkError(err, res)) {
+            accessTokens[payload.athlete.id] = payload.access_token;
+            fs.writeFile(tokenStorePath, JSON.stringify(accessTokens), (writeErr) => {
+                if (writeErr) {
+                    winston.log('error', 'Problem saving auth key!', err);
+                }
+                winston.log('info', 'New access token saved');
+            });
+            apicache.clear();
+            res.redirect('/');
+        }
     });
 });
 
-app.get('/getAthletes', function (req, res) {
-    apicache.clear();
-    strava.clubs.listMembers({ 'per_page': 200, 'access_token': accessTokens[12160090], id: 175865 }, function (err, payload, limits) {
-        checkLimits(limits, res);
-        checkError(err, res);
+app.get('/getAthletes', (req, res) => {
+    const athletePromises = Object.keys(accessTokens)
+        .map(key => new Promise((resolve, reject) => {
+            strava.athlete.get({ 'access_token': accessTokens[key] }, (err, payload) => {
+                if (err) {
+                    reject();
+                }
+                resolve({
+                    id: key,
+                    firstname: payload.firstname,
+                    lastname: payload.lastname
+                });
+            });
+        }));
 
-        res.json(payload);
-    });
+    Promise.all(athletePromises).then((results => res.json(results)));
 });
 
-app.get('/getStat/:id', cache('10 minutes'), function (req, res) {
-    strava.athletes.stats({ 'access_token': accessTokens[req.params.id], id: req.params.id }, function (err, payload, limits) {
-        checkLimits(limits, res);
-        checkError(err, res);
-
-        res.json(payload);
+app.get('/getStat/:id', cache('10 minutes'), (req, res) => {
+    strava.athletes.stats({ 'access_token': accessTokens[req.params.id], id: req.params.id }, (err, payload, limits) => {
+        if (checkLimits(limits, res) && checkError(err, res)) {
+            res.json(payload);
+        }
     });
 });
 

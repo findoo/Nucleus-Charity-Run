@@ -8,41 +8,35 @@ import Link from './Link';
 
 export default class AthleteTable extends Component {
 
-    formatDecimalPace = pace => `${moment().startOf('day').add(pace, 'minutes').format('m:ss')}/km`;
-
-    getDistance = ath => get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) / 1000;
-
-    getPace = (ath, distance) => get(ath, `stats.ytd_${this.props.sport}_totals.moving_time`, 0) / 60 / distance;
-
     getRows = () => {
         return Object.values(this.props.athletes)
-            .filter(ath => this.getDistance(ath) !== 0)
-            .sort((a, b) => this.getDistance(b) - this.getDistance(a))
+            .filter(ath => get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) !== 0)
+            .sort((a, b) => get(b, `stats.ytd_${this.props.sport}_totals.distance`, 0) - get(a, `stats.ytd_${this.props.sport}_totals.distance`, 0))
             .map((ath, idx) => {
-                const runnerDistance = this.getDistance(ath);
-                const averagePaceDecimal = this.getPace(ath, runnerDistance);
+                let runnerDistance = get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) / 1000;
+                let averageSpeed =  moment().startOf('day').add(get(ath, `stats.ytd_${this.props.sport}_totals.moving_time`, 0) / 60 / runnerDistance, 'minutes');
                 return <Row isPacer={ath.firstname === 'Pacer'} key={idx}>
                     <td><input type='checkbox' checked={ath.selected} value={ath.selected} onChange={this.props.toggleAth.bind(null, ath.id)} /></td>
                     <td><Link href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}`}</Link></td>
                     <NumberTD>{runnerDistance.toFixed(2)}km</NumberTD>
-                    <NumberTD>{this.formatDecimalPace(averagePaceDecimal)}</NumberTD>
+                    <NumberTD>{averageSpeed.format('m:ss')}/km</NumberTD>
                     <NumberTD>{(runnerDistance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
                 </Row>
             });
     }
 
     getTotalRow = () => {
-        const athletesExcludingPacer = Object.values(this.props.athletes)
-            .filter(ath => ath.firstname !== 'Pacer');
-        const distance = athletesExcludingPacer
-            .reduce((a, b) => a + this.getDistance(b), 0);
-        const averagePaceDecimal = athletesExcludingPacer
-            .reduce((a, b) => a + get(b, `stats.ytd_${this.props.sport}_totals.moving_time`, 0), 0) / 60 / distance;
+        let distance = Object.values(this.props.athletes)
+            .filter(ath => ath.firstname !== 'Pacer')
+            .reduce((a, b) => a + get(b, `stats.ytd_${this.props.sport}_totals.distance`, 0), 0) / 1000;
+        let averageSpeed = moment().startOf('day').add(Object.values(this.props.athletes)
+            .filter(ath => ath.firstname !== 'Pacer')
+            .reduce((a, b) => a + get(b, `stats.ytd_${this.props.sport}_totals.moving_time`, 0), 0) / 60 / distance, 'minutes');
         return <TotalRow key='total'>
             <td></td>
             <td>Total (ex. Pacer)</td>
             <NumberTD>{distance.toFixed(2)}km</NumberTD>
-            <NumberTD>{this.formatDecimalPace(averagePaceDecimal)}</NumberTD>
+            <NumberTD>{averageSpeed.format('m:ss')}/km</NumberTD>
             <NumberTD>{(distance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
         </TotalRow>;
     }
@@ -57,7 +51,7 @@ export default class AthleteTable extends Component {
                     </Th>
                     <Th>Name</Th>
                     <Th align='right'>Distance</Th>
-                    <Th align='right'>Average Pace</Th>
+                    <Th align='right'>Average pace</Th>
                     <Th align='right'>% complete</Th>
                 </tr>
             </thead>

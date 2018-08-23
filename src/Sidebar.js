@@ -23,7 +23,7 @@ export default class Sidebar extends Component {
 
     render() {
         return (
-            <Bar hide={this.state.hidden}>
+            <Bar hide={this.state.hidden} onClick={this.state.hidden ? this.toggleSidebar : () => {}}>
                 <HideDiv onClick={this.toggleSidebar}>{this.state.hidden ? '<' : '>'}</HideDiv>
                 {!this.state.hidden && !this.state.showActivities && <div>
                     <h1>Nucleus Charity 2018</h1>
