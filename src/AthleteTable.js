@@ -15,14 +15,30 @@ export default class AthleteTable extends Component {
             .map((ath, idx) => {
                 let runnerDistance = get(ath, `stats.ytd_${this.props.sport}_totals.distance`, 0) / 1000;
                 let averageSpeed =  moment().startOf('day').add(get(ath, `stats.ytd_${this.props.sport}_totals.moving_time`, 0) / 60 / runnerDistance, 'minutes');
+                let percentage = runnerDistance / this.props.targetDistance * 100;
                 return <Row isPacer={ath.firstname === 'Pacer'} key={idx}>
                     <td><input type='checkbox' checked={ath.selected} value={ath.selected} onChange={this.props.toggleAth.bind(null, ath.id)} /></td>
-                    <td><Link href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}`}</Link></td>
+                    <td><Link href={`https://www.strava.com/athletes/${ath.id}`}>{`${ath.firstname} ${ath.lastname}${this.getEmoji(percentage, idx)}`}</Link></td>
                     <NumberTD>{runnerDistance.toFixed(2)}km</NumberTD>
                     <NumberTD>{averageSpeed.format('m:ss')}/km</NumberTD>
-                    <NumberTD>{(runnerDistance / this.props.targetDistance * 100).toFixed(2)}%</NumberTD>
-                </Row>
-            });
+                    <NumberTD>{percentage.toFixed(2)}%</NumberTD>
+                </Row>;
+           });
+    }
+
+    getEmoji = (percentage, idx) => {
+        if (percentage > 100) {
+            if (idx === 0) {
+                return '🥇';
+            }
+            if (idx === 1) {
+                return '🥈';
+            }
+            if (idx === 2) {
+                return '🥉';
+            }
+        }
+        return '';
     }
 
     getTotalRow = () => {
@@ -76,21 +92,22 @@ const Table = styled.table`
     }
 `;
 
-const NumberTD = styled.td`
-    text-align: right;
-`;
-
 const Th = styled.th`
     ${props => props.width ? `width: ${props.width}` : ''}
     text-align: ${props => props.align || 'left'}
 `;
 
-const TotalRow = styled.tr`
-    font-weight: bold;
+
+export const NumberTD = styled.td`
+    text-align: right;
 `;
 
-const Row = styled.tr`
+export const Row = styled.tr`
     ${props => props.isPacer ? 'border-bottom: 1px solid red;' : ''}
+`;
+
+export const TotalRow = styled.tr`
+    font-weight: bold;
 `;
 
 AthleteTable.propTypes = {
