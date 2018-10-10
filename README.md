@@ -1,5 +1,5 @@
 # Nucleus-Charity-Run
 Plotting a simulated run over a year with Strava
 
-Deployed at http://finlaysmith.co.uk:3001/
+Deployed at https://nucleus.finlaysmith.co.uk/
 More details about the challenge to follow..
